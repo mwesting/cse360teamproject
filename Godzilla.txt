@@ -1,0 +1,39 @@
+-t
+Title Justification
+-t
+Godzilla Song
+-l
+This is Left justification
+What do you get when you take Godzilla to the mall?
+He scares all the children and shreds all the pillows
+And knocks over walls
+His emerald eyes, they sparkle and shine
+As he eats the food court and steals half my fries
+-c
+This is centered justification
+That's what you get when 
+-l
+-i
+This is indented
+-i
+you take Godzilla to the mall
+What do you get when you take Godzilla to meet your mom?
+The next line will use the e flag to make a blank line
+-e
+He rings the bell and she looks out the window, and calls the cops
+Now there will be blocking
+-b
+I try to explain that he's mostly tame
+As long as there's pizza and video games
+That's what you get when you take Godzilla to meet your mom
+While everyone else is running and screaming
+The next line is the n flag to end the blocking
+-n
+I just love being with you
+This is just a default line 
+The next lines will be right justified
+-r
+This is right justified
+I guess they don't see all the things that I'm seein'
+That make you so uniquely you, you, you, you
+What do you get when you meet Godzilla and fall in love?
