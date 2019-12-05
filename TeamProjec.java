@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -59,6 +60,11 @@ public class TeamProjec extends Application {
 	boolean block = false;
 	
 	boolean nextLine = false;
+	
+	
+
+
+	
 	
 	public void start(Stage primaryStage) {
 		
@@ -120,14 +126,24 @@ public class TeamProjec extends Application {
 				single=true;
 				oneLine=true;
 				
+				ArrayList<String> fileList = new ArrayList<String>();
+				ArrayList<String> wordsProcessingList;//=new ArrayList<String>();
+				while(sc.hasNext()) {
+					fileList.add(sc.next());
+					
+				}//end of while
 				
-				
-				while (sc.hasNextLine()) {
-					String line = sc.nextLine();
-					System.out.println(line);
+				int fileListIndex=0;
+				int placeHolder=0;
+				while (fileListIndex<fileList.size()) {
+					//System.out.println("fileListIndex: "+ fileListIndex);
+						//String line = sc.nextLine();
+						String line="";
+						
+					//System.out.println(line);
 					//Flag setting
-					if (line.charAt(0) == '-') {
-						line = line.substring(1);
+					if (fileList.get(fileListIndex).charAt(0) == '-') {
+						line = fileList.get(fileListIndex).substring(1);
 						
 						switch (line) {
 						case "l":
@@ -190,32 +206,203 @@ public class TeamProjec extends Application {
 						
 					//Text processing
 					} else {
+						wordsProcessingList=new ArrayList<String>();
+						placeHolder=fileListIndex-1;
+						//read all words from here till the next flag
+				
+						while (fileListIndex<fileList.size()&&fileList.get(fileListIndex).charAt(0)!='-') {
+							if (fileList.get(fileListIndex).charAt(0) != '-') {
+								wordsProcessingList.add(fileList.get(fileListIndex));
+							}
+							fileListIndex++;
+						}//end of while
 						
 						String[] words= new String[80];
+						
+						
+						///////////////////////////////////// Start Flag Logic Here
 						if(title) //if -t
 						{
-							words=textProcessor.title(line);
+							words=textProcessor.ListLengthProcessing(wordsProcessingList, 80);
+							fileListIndex=placeHolder;
+							for(int i=0;i<words.length-1;i++)
+							{
+								if(words[i]!=null&& words[i]!=" ")
+								{
+									fileListIndex++;
+								}
+							}
+							words=textProcessor.titlew(words);
 							title=false;
 						}else if(nextLine) { //if -e
+							
+							
+							fileListIndex=placeHolder;
+							
 							words[0]=" ";
 							nextLine=false;
 						}else if(right) { //if -r
-							words=textProcessor.right(line);
+							words=textProcessor.ListLengthProcessing(wordsProcessingList, 80);
+							fileListIndex=placeHolder;
+							for(int i=0;i<words.length-1;i++)
+							{
+								if(words[i]!=null&& words[i]!=" ")
+								{
+									fileListIndex++;
+								}
+							}
+							words=textProcessor.rightw(words);
 						}else if(center) { //if -c
-							words=textProcessor.center(line);
+							words=textProcessor.ListLengthProcessing(wordsProcessingList, 80);
+							fileListIndex=placeHolder;
+							for(int i=0;i<words.length-1;i++)
+							{
+								if(words[i]!=null&& words[i]!=" ")
+								{
+									fileListIndex++;
+								}
+							}
+							words=textProcessor.centerw(words);
 						}else if(left) { //if -l 
 							if(!single) { //if -2 two columns
-								words=textProcessor.twoColumns(line, sc);
+								//basically for two columns I have to run through the entire file with the same outer program but just modified for 35 characters
+								
+								
+								fileListIndex=placeHolder;
+								/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								ArrayList<String[]> chunks=new ArrayList<String[]>(); //create arrayList of String arrays
+								int placeHolder2;
+								while (fileListIndex<fileList.size()&&!single) {
+									
+									//Flag setting
+									if (fileList.get(fileListIndex).charAt(0) == '-') {
+										line="";
+										
+										line = fileList.get(fileListIndex).substring(1);
+										
+										switch (line) {
+										
+										case "1": //single column
+											
+											single = true;
+											break;
+										case "e":
+											nextLine = true;
+											break;
+										
+										}
+										
+									//Text processing
+									} else {
+										wordsProcessingList=new ArrayList<String>();
+										placeHolder2=fileListIndex-1;
+										
+										//read all words from here till the next flag
+										while (fileListIndex<fileList.size()&&fileList.get(fileListIndex).charAt(0)!='-') {
+											if (fileList.get(fileListIndex).charAt(0) != '-') {
+												wordsProcessingList.add(fileList.get(fileListIndex));
+											}
+											fileListIndex++;
+										}//end of while
+										
+										
+										
+										///////////// Start inner columns flag Logic Here
+										
+										if(nextLine) {
+
+											
+											fileListIndex=placeHolder2;
+											
+											words[0]="                                 ";//33 spaces ; because there is another space added after a "word" in my lengthProcessing
+											nextLine=false;
+										}else if(left) { //if -l 
+											
+												 //if -l
+													words=textProcessor.ListLengthProcessing(wordsProcessingList, 35);
+													
+													fileListIndex=placeHolder2;
+													
+													for(int i=0;i<words.length-1;i++)
+													{
+														if(words[i]!=null&&words[i]!=" ")
+														{
+															fileListIndex++;
+														}
+													}
+													words=textProcessor.leftw(words);
+													
+												
+											//end of else !single
+										}//end of left
+										
+										chunks.add(words);
+									}//end of else
+									
+									fileListIndex++;
+									
+								}// END OF WHILE LOOP while (sc.hasNextLine()) 
+								
+								
+								////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+								
+									
+								
+								fileListIndex=placeHolder;
+								for(int h=0;h<chunks.size();h++)
+								{
+									for(int i=0;i<chunks.get(h).length;i++)
+									{
+										if(chunks.get(h)[i]!=null&& chunks.get(h)[i]!=" ")
+										{
+											fileListIndex++;
+										}
+									}
+								}
+								
+								
+								words=textProcessor.twoColumnsw(chunks);
+								single=true;
 							}else { //if -1 single column
 								if(indent) { //if -i
-									words=textProcessor.indent(line);
+									words=textProcessor.ListLengthProcessing(wordsProcessingList, 75);
+									fileListIndex=placeHolder;
+									for(int i=0;i<words.length-1;i++)
+									{
+										if(words[i]!=null&& words[i]!=" ")
+										{
+											fileListIndex++;
+										}
+									}
+									words=textProcessor.indentw(words);
 									indent=false;
 								}else if(block) {//if -b, false if -n
-									words=textProcessor.block(line);
+									words=textProcessor.ListLengthProcessing(wordsProcessingList, 70);
+									fileListIndex=placeHolder;
+									for(int i=0;i<words.length-1;i++)
+									{
+										if(words[i]!=null&& words[i]!=" ")
+										{
+											fileListIndex++;
+										}
+									}
+									words=textProcessor.blockw(words);
 									 
 							
-								}else {
-									words=textProcessor.left(line);
+								}else { //if -l
+									words=textProcessor.ListLengthProcessing(wordsProcessingList, 80);
+									
+									fileListIndex=placeHolder;
+									
+									for(int i=0;i<words.length-1;i++)
+									{
+										if(words[i]!=null&&words[i]!=" ")
+										{
+											fileListIndex++;
+										}
+									}
+									words=textProcessor.leftw(words);
+									
 								}
 							}//end of else !single
 						}//end of left
@@ -226,42 +413,8 @@ public class TeamProjec extends Application {
 						}
 						
 						
-						//Length processing
-						/*
-						if (line.length() > 80) {
-							//String[] words = line.split(" ", -1);
-							
-							int i = 0;
-							int size = -1;
-							while (i < words.length) {
-								//size += words[i].length() + 1;
-								size+=words[i].length();
-								
-								if (size > 80) {
-									System.out.println(i + " " + size);
-									break;
-								}
-								i++;
-							}
-							
-							System.out.println(i + " " + words[i]);
-							
-							for (int j = 0; j < i; j++) {
-								previewText.setText(previewText.getText() + words[j] + " ");
-							}
-							
-							previewText.setText(previewText.getText() + "\n");
-							
-							for (int j = i; j < words.length; j++) {
-								previewText.setText(previewText.getText() + words[j] + " ");
-							}
-							
-							previewText.setText(previewText.getText() + "\n");
-							
-						} else {
-							previewText.setText(previewText.getText() + line + "\n");
-						}
-						*/
+						
+						
 						int i = 0;
 						int size = 0;
 						int b=0;
@@ -280,10 +433,10 @@ public class TeamProjec extends Application {
 								size+=words[i].length();
 							}
 							
-							if (size > 80) {
-								System.out.println(i + " " + size);
-								break;
-							}
+							//if (size > 80) {
+							//	System.out.println(i + " 1 " + size);
+								//break;
+							//}
 							previewText.setText(previewText.getText() + words[i]);
 							i++;
 							
@@ -295,11 +448,11 @@ public class TeamProjec extends Application {
 					
 						}
 						
-						System.out.println(i + " " + words[i]);
+					//	System.out.println(i + " 2 " + words[i-2]);
 						
 						
 						
-					}
+					}//end of else
 					
 					
 					
@@ -309,6 +462,7 @@ public class TeamProjec extends Application {
 					//previewText.setText(previewText.getText() + "\n" + line);
 					
 					
+					fileListIndex++;
 					
 				}// END OF WHILE LOOP while (sc.hasNextLine()) 
 				
